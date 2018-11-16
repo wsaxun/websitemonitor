@@ -2,3 +2,4 @@ html5lib
 requests
 beautifulsoup4
 xlsxwriter
+PyYAML

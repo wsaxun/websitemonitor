@@ -1,0 +1,37 @@
+[ 2018-11-16 10:18:18,205 ] [ INFO ] [ MainThread ] [ <module> ] test
+[ 2018-11-16 10:18:18,205 ] [ ERROR ] [ MainThread ] [ <module> ] test
+[ 2018-11-16 11:24:59,044 ] [ INFO ] [ MainThread ] [ main ] hello
+[ 2018-11-16 13:42:13,954 ] [ INFO ] [ MainThread ] [ main ] 当前获取到的城市列表: ['Hong Kong', 'Munich', 'Stockholm', 'London', 'Padova', 'Zurich', 'Groningen', 'Dallas', 'Athens', 'Montreal']
+[ 2018-11-16 13:42:15,295 ] [ INFO ] [ MainThread ] [ main ] 监测网站可用次数为27
+[ 2018-11-16 13:42:15,295 ] [ INFO ] [ MainThread ] [ main ] 监测网站剩余可用次数为27
+[ 2018-11-16 13:56:24,327 ] [ INFO ] [ MainThread ] [ main ] 当前获取到的城市列表: ['Hong Kong', 'Munich', 'Stockholm', 'London', 'Padova', 'Zurich', 'Groningen', 'Dallas', 'Athens', 'Montreal']
+[ 2018-11-16 13:56:25,352 ] [ INFO ] [ MainThread ] [ main ] 监测网站可用次数为27
+[ 2018-11-16 13:56:25,352 ] [ INFO ] [ MainThread ] [ main ] 监测网站剩余可用次数为27
+[ 2018-11-16 14:03:37,184 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为27
+[ 2018-11-16 14:04:11,577 ] [ INFO ] [ MainThread ] [ works ] PlatON网站服务优化监测表-汇总-201811161403.xlsx写入数据完成
+[ 2018-11-16 14:04:12,582 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站剩余可用次数为18
+[ 2018-11-16 14:04:13,876 ] [ INFO ] [ MainThread ] [ main ] 当前获取到的城市列表: ['Hong Kong', 'Munich', 'Stockholm', 'London', 'Padova', 'Zurich', 'Groningen', 'Dallas', 'Athens', 'Montreal']
+[ 2018-11-16 14:04:14,857 ] [ INFO ] [ MainThread ] [ main ] 监测网站可用次数为18
+[ 2018-11-16 14:04:14,858 ] [ INFO ] [ MainThread ] [ main ] 监测网站剩余可用次数为18
+[ 2018-11-16 14:28:44,957 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为18
+[ 2018-11-16 14:43:05,448 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为16
+[ 2018-11-16 14:44:06,324 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为13
+[ 2018-11-16 14:44:46,303 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为10
+[ 2018-11-16 14:45:42,457 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为7
+[ 2018-11-16 14:45:59,526 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为5
+[ 2018-11-16 14:46:15,717 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为3
+[ 2018-11-16 14:48:16,197 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:48:32,451 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:49:02,027 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:49:39,488 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:50:22,594 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:51:10,196 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:54:38,542 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:56:03,197 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 14:56:21,773 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:02:31,222 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:03:20,224 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:06:47,936 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:16:38,891 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:17:12,843 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 15:18:20,670 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0

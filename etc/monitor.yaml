@@ -1,0 +1,16 @@
+MONITOR: &BASE
+  log:
+    size: 104857600 # 100M 日志切割一次
+    backup_count: 10 # 保留10份
+
+
+DEV:
+  <<: *BASE
+
+
+TEST:
+  <<: *BASE
+
+
+PRD:
+  <<: *BASE

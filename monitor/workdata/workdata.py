@@ -1,23 +1,14 @@
-# -*- coding:utf-8-*-
-
-import logging
-import sys
 from datetime import datetime
 
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
-from collect.collector import getdata, checkavailable
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+from monitor.collect.collector import get_data, check_available
+from monitor.utils.log import log_init
+
+LOG = log_init(__name__)
 
 codes = ("hk", "d2", "se", "uk", "it", "ch", "n4", "r1", "gr", "mt")
-# sites = {
-#     "www.platon.network": "Platon(京东)",
-#     "sg.platon.network": "Platon(东南亚)",
-#     "www.ont.io": "ONT本体(东南亚)",
-#     "www.ethereum.org": "Ethereum以太坊",
-# }
 
 sites = {
     "www.platon.network": "Platon(京东)"
@@ -75,7 +66,8 @@ def createextratable(workbook, titlstyle, coltitlestyle):
     mergeraw.set_font_size(12)
     mergeraw.set_font_name("宋体")
 
-    sitestyle = workbook.add_format({"valign": "vcenter", "border": 1, "font_size": 12})
+    sitestyle = workbook.add_format(
+        {"valign": "vcenter", "border": 1, "font_size": 12})
     commonstyle = workbook.add_format({"font_size": 12, "border": 1})
 
     worksheet.merge_range(4, 1, 19, 1, "%s" % dates, mergeraw)
@@ -172,7 +164,9 @@ def works():
         worksheet.set_column(1, 1, 38)
         worksheet.set_column(2, 6, 17)
         # 合并第1行的第2到7列，并写入标题
-        worksheet.merge_range(0, 1, 0, 6, "%s网站服务网页监测例检表%s" % (sites.get(site), dates), titlestyle)
+        worksheet.merge_range(0, 1, 0, 6,
+                              "%s网站服务网页监测例检表%s" % (sites.get(site), dates),
+                              titlestyle)
 
         # 在第二行写入表格的列名
         worksheet.write_string(1, 1, "地区/国家", coltitlestyle)
@@ -182,30 +176,38 @@ def works():
         worksheet.write_string(1, 5, "下载时间(ms)", coltitlestyle)
         worksheet.write_string(1, 6, "访问状态(ms)", coltitlestyle)
         for code in codes:
-            country, city, rtime, ctime, dtime = getdata(
+            country, city, rtime, ctime, dtime = get_data(
                 "https://api.asm.ca.com/1.6/cp_check?checkloc=%s&type=https&host=%s&path=&port=443&callback=update_" % (
                     code, site), code)
-            worksheet.write_string(row, 1, "%s-%s" % (countryCode.get(country), cityCode.get(city)), areaStyle)
+            worksheet.write_string(row, 1, "%s-%s" % (
+                countryCode.get(country), cityCode.get(city)), areaStyle)
             worksheet.write_number(row, 3, int(rtime), dataStyle)
             worksheet.write_number(row, 4, int(ctime), dataStyle)
             worksheet.write_number(row, 5, int(dtime), dataStyle)
-            worksheet.write_formula(row, 2, "=SUM(D%s:F%s)/1000" % (row + 1, row + 1), dataStyle)
+            worksheet.write_formula(row, 2,
+                                    "=SUM(D%s:F%s)/1000" % (row + 1, row + 1),
+                                    dataStyle)
             worksheet.write_formula(row, 6,
-                                    '=IF(C%s>3,"超时",IF(C%s=0,"超时",IF(C%s>3,"超时","OK")))' % (row + 1, row + 1, row + 1),
+                                    '=IF(C%s>3,"超时",IF(C%s=0,"超时",IF(C%s>3,"超时","OK")))' % (
+                                        row + 1, row + 1, row + 1),
                                     dataStyle)
             row += 1
         column = xl_col_to_name(currentcol)
-        workcharts(workbook, workchart, worksheet.name, "访问总时间(s)", "C", "%s2" % column)
-        workcharts(workbook, workchart, worksheet.name, "解析时间(ms)", "D", "%s20" % column)
-        workcharts(workbook, workchart, worksheet.name, "连接时间(ms)", "E", "%s38" % column)
-        workcharts(workbook, workchart, worksheet.name, "下载时间(ms)", "F", "%s56" % column)
+        workcharts(workbook, workchart, worksheet.name, "访问总时间(s)", "C",
+                   "%s2" % column)
+        workcharts(workbook, workchart, worksheet.name, "解析时间(ms)", "D",
+                   "%s20" % column)
+        workcharts(workbook, workchart, worksheet.name, "连接时间(ms)", "E",
+                   "%s38" % column)
+        workcharts(workbook, workchart, worksheet.name, "下载时间(ms)", "F",
+                   "%s56" % column)
         currentcol += 10
     createextratable(workbook, titlestyle, coltitlestyle)
 
     workbook.close()
-    logging.info("%s写入数据完成" % filename)
+    LOG.info("%s写入数据完成" % filename)
 
 
-logging.info("监测网站可用次数为%d" % int(checkavailable()))
+LOG.info("监测网站可用次数为%d" % int(check_available()))
 works()
-logging.info("监测网站剩余可用次数为%d" % int(checkavailable()))
+LOG.info("监测网站剩余可用次数为%d" % int(check_available()))

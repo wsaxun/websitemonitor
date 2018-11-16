@@ -1,11 +1,4 @@
-# -*- coding:utf-8-*-
-
 import xlsxwriter
-
-from collect.collector import *
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 
 def workcharts(workbook, worksheet, sheetnames, seriesnames, col, position):
@@ -27,12 +20,14 @@ def workcharts(workbook, worksheet, sheetnames, seriesnames, col, position):
 def diaoyong():
     heads = ["国家/地区", "访问总时间(s)"]
     data = [
-        ["China-Hong Kong(香港)", "Germany-Munich(德国-慕尼黑)", "Sweden-Stockholm(瑞典-斯德哥尔摩)", "United Kingdom-London(英国-伦敦)",
+        ["China-Hong Kong(香港)", "Germany-Munich(德国-慕尼黑)",
+         "Sweden-Stockholm(瑞典-斯德哥尔摩)", "United Kingdom-London(英国-伦敦)",
          "Italy-Padova(意大利-帕多瓦)", "Switzerland-Zurich(瑞士-苏黎世)"],
         [1.763, 1.125, 1.103, 1.318, 0, 1.049],
     ]
     workbook = xlsxwriter.Workbook(u"测试数据.xlsx")
-    style = workbook.add_format({"bold": 1, "align": "center", "bg_color": "#808080"})
+    style = workbook.add_format(
+        {"bold": 1, "align": "center", "bg_color": "#808080"})
 
     worksheet = workbook.add_worksheet("数据分析图标汇总")
     worksheet.write_row("B2", heads, style)
@@ -50,5 +45,3 @@ def diaoyong():
 
 
 diaoyong()
-
-# def workcharts(workbook, worksheet, sheetnames, seriesnames, col, position)
