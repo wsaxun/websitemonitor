@@ -35,3 +35,7 @@
 [ 2018-11-16 15:16:38,891 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
 [ 2018-11-16 15:17:12,843 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
 [ 2018-11-16 15:18:20,670 ] [ INFO ] [ MainThread ] [ <module> ] 监测网站可用次数为0
+[ 2018-11-16 16:47:03,304 ] [ INFO ] [ MainThread ] [ main ] 当前获取到的城市列表: ['Hong Kong', 'Munich', 'Stockholm', 'London', 'Padova', 'Zurich', 'Groningen', 'Dallas', 'Athens', 'Montreal']
+[ 2018-11-16 16:47:04,664 ] [ INFO ] [ MainThread ] [ main ] 监测网站可用次数为50
+[ 2018-11-16 16:47:36,965 ] [ INFO ] [ MainThread ] [ works ] PlatON网站服务优化监测表-汇总-201811161647.xlsx写入数据完成
+[ 2018-11-16 16:47:37,955 ] [ INFO ] [ MainThread ] [ main ] 监测网站剩余可用次数为41

@@ -1,23 +1,25 @@
 import xlsxwriter
 
+from monitor.utils.config import CONFIG
 
-def workcharts(workbook, worksheet, sheetnames, seriesnames, col, position):
+
+def work_charts(workbook, worksheet, sheet_names, series_names, col, position):
     chart1 = workbook.add_chart({"type": "bar"})
     chart1.add_series({
-        "name": "%s" % (seriesnames),
-        "categories": "='%s'!$B$3:$B$8" % sheetnames,
-        "values": "'%s'!$%s$3:$%s$8" % (sheetnames, col, col),
+        "name": series_names,
+        "categories": "='%s'!$B$3:$B$8" % sheet_names,
+        "values": "'%s'!$%s$3:$%s$8" % (sheet_names, col, col),
         "data_labels": {"value": True},
         "line": {"none": True},
     })
 
-    chart1.set_title({"name": "%s的%s" % (sheetnames, seriesnames)})
+    chart1.set_title({"name": "%s的%s" % (sheet_names, series_names)})
 
     chart1.set_style(27)
     worksheet.insert_chart(position, chart1)
 
 
-def diaoyong():
+def create_xls():
     heads = ["国家/地区", "访问总时间(s)"]
     data = [
         ["China-Hong Kong(香港)", "Germany-Munich(德国-慕尼黑)",
@@ -34,14 +36,13 @@ def diaoyong():
     worksheet.write_column("B3", data[0])
     worksheet.write_column("C3", data[1])
 
-    workchart = workbook.add_worksheet("测试数据")
-    sites = {
-        "www.platon.network": "Platon(京东)"
-    }
-    for site in sites.keys():
-        workcharts(workbook, workchart, worksheet.name, "访问时间", "C", "B10")
-        workcharts(workbook, workchart, worksheet.name, "访问时间", "C", "B26")
+    work_chart = workbook.add_worksheet("测试数据")
+    sites = CONFIG.sites_config
+    for _ in sites.keys():
+        work_charts(workbook, work_chart, worksheet.name, "访问时间", "C", "B10")
+        work_charts(workbook, work_chart, worksheet.name, "访问时间", "C", "B26")
     workbook.close()
 
 
-diaoyong()
+if __name__ == '__main__':
+    create_xls()

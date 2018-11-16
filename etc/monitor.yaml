@@ -1,7 +1,46 @@
 MONITOR: &BASE
   log:
-    size: 104857600 # 100M 日志切割一次
+    size: 104857600 # 100M 日志切割一次 100*1024*10245
     backup_count: 10 # 保留10份
+  asm:
+    credits: 'https://api.asm.ca.com/1.6/acct_credits?&callback=check_avail_credits'
+    city: 'https://asm.ca.com/en/checkit.php'
+    cp: 'https://api.asm.ca.com/1.6/cp_check'
+    codes:
+      - "hk"
+      - "d2"
+      - "se"
+      - "uk"
+      - "it"
+      - "ch"
+      - "n4"
+      - "r1"
+      - "gr"
+      - "mt"
+    sites:
+      "www.platon.network": "Platon(京东)"
+    country_code_config:
+      "cn": "中国"
+      "de": "德国"
+      "se": "瑞典"
+      "gb": "英国"
+      "it": "意大利"
+      "ch": "瑞士"
+      "nl": "荷兰"
+      "us": "美国"
+      "gr": "希腊"
+      "ca": "加拿大"
+    city_code_config:
+      "Hong Kong": "香港"
+      "München": "慕尼黑"
+      "Stockholm": "斯德哥尔摩"
+      "London": "伦敦"
+      "Padova": "帕多瓦"
+      "Zurich": "苏黎世"
+      "Groningen": "格罗宁根"
+      "Dallas": "达拉斯"
+      "Athens": "雅典"
+      "Montreal": "蒙特利尔"
 
 
 DEV:

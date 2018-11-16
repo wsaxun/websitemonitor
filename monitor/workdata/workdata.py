@@ -3,48 +3,22 @@ from datetime import datetime
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
 
-from monitor.collect.collector import get_data, check_available
+from monitor.collect.collector import get_data
+from monitor.utils.config import CONFIG
 from monitor.utils.log import log_init
 
 LOG = log_init(__name__)
 
-codes = ("hk", "d2", "se", "uk", "it", "ch", "n4", "r1", "gr", "mt")
-
-sites = {
-    "www.platon.network": "Platon(京东)"
-}
-
-countryCode = {
-    "cn": "中国",
-    "de": "德国",
-    "se": "瑞典",
-    "gb": "英国",
-    "it": "意大利",
-    "ch": "瑞士",
-    "nl": "荷兰",
-    "us": "美国",
-    "gr": "希腊",
-    "ca": "加拿大"
-}
-
-cityCode = {
-    "Hong Kong": "香港",
-    "München": "慕尼黑",
-    "Stockholm": "斯德哥尔摩",
-    "London": "伦敦",
-    "Padova": "帕多瓦",
-    "Zurich": "苏黎世",
-    "Groningen": "格罗宁根",
-    "Dallas": "达拉斯",
-    "Athens": "雅典",
-    "Montreal": "蒙特利尔",
-}
+codes = CONFIG.codes_config
+sites = CONFIG.sites_config
+countryCode = CONFIG.country_code_config
+cityCode = CONFIG.city_code_config
 
 
-def createextratable(workbook, titlstyle, coltitlestyle):
+def create_extra_table(workbook, title_style, col_title_style):
     dates = datetime.today().strftime("%Y-%m-%d")
     worksheet = workbook.add_worksheet("手工监测数据")
-    worksheet.merge_range(1, 1, 1, 6, "网站访问-手工监测数据统计", titlstyle)
+    worksheet.merge_range(1, 1, 1, 6, "网站访问-手工监测数据统计", title_style)
     worksheet.set_row(1, 54)
     worksheet.set_column(1, 1, 12)
     worksheet.set_column(2, 2, 17)
@@ -53,12 +27,12 @@ def createextratable(workbook, titlstyle, coltitlestyle):
     worksheet.set_column(5, 5, 18)
     worksheet.set_column(6, 6, 18)
 
-    worksheet.write_string(3, 1, "监测时间", coltitlestyle)
-    worksheet.write_string(3, 2, "监测站点", coltitlestyle)
-    worksheet.write_string(3, 3, "站点网址", coltitlestyle)
-    worksheet.write_string(3, 4, "监测工具", coltitlestyle)
-    worksheet.write_string(3, 5, "首页相应时间(s)", coltitlestyle)
-    worksheet.write_string(3, 6, "网址是否可访问", coltitlestyle)
+    worksheet.write_string(3, 1, "监测时间", col_title_style)
+    worksheet.write_string(3, 2, "监测站点", col_title_style)
+    worksheet.write_string(3, 3, "站点网址", col_title_style)
+    worksheet.write_string(3, 4, "监测工具", col_title_style)
+    worksheet.write_string(3, 5, "首页相应时间(s)", col_title_style)
+    worksheet.write_string(3, 6, "网址是否可访问", col_title_style)
 
     mergeraw = workbook.add_format({"border": 1})
     mergeraw.set_align("center")
@@ -96,18 +70,18 @@ def createextratable(workbook, titlstyle, coltitlestyle):
             raw += 4
 
 
-def workcharts(workbook, worksheet, sheetnames, seriesnames, col, position):
+def work_charts(workbook, worksheet, sheet_names, series_names, col, position):
     # 创建一个条形图
     chart1 = workbook.add_chart({"type": "bar"})
     chart1.add_series({
-        "name": "%s" % (seriesnames),
-        "categories": "='%s'!$B$3:$B$12" % sheetnames,
-        "values": "'%s'!$%s$3:$%s$12" % (sheetnames, col, col),
+        "name": "%s" % (series_names),
+        "categories": "='%s'!$B$3:$B$12" % sheet_names,
+        "values": "'%s'!$%s$3:$%s$12" % (sheet_names, col, col),
         "data_labels": {"value": True},
         "line": {"none": True},
     })
 
-    chart1.set_title({"name": "%s的%s" % (sheetnames, seriesnames)})
+    chart1.set_title({"name": "%s的%s" % (sheet_names, series_names)})
 
     chart1.set_style(27)
     worksheet.insert_chart(position, chart1)
@@ -176,9 +150,10 @@ def works():
         worksheet.write_string(1, 5, "下载时间(ms)", coltitlestyle)
         worksheet.write_string(1, 6, "访问状态(ms)", coltitlestyle)
         for code in codes:
-            country, city, rtime, ctime, dtime = get_data(
-                "https://api.asm.ca.com/1.6/cp_check?checkloc=%s&type=https&host=%s&path=&port=443&callback=update_" % (
-                    code, site), code)
+            api = CONFIG.cp_config
+            url = api + ("?checkloc=%s&type=https&host=%s&path=&port=443&"
+                      "callback=update_") % (code, site)
+            country, city, rtime, ctime, dtime = get_data(url, code)
             worksheet.write_string(row, 1, "%s-%s" % (
                 countryCode.get(country), cityCode.get(city)), areaStyle)
             worksheet.write_number(row, 3, int(rtime), dataStyle)
@@ -193,21 +168,16 @@ def works():
                                     dataStyle)
             row += 1
         column = xl_col_to_name(currentcol)
-        workcharts(workbook, workchart, worksheet.name, "访问总时间(s)", "C",
+        work_charts(workbook, workchart, worksheet.name, "访问总时间(s)", "C",
                    "%s2" % column)
-        workcharts(workbook, workchart, worksheet.name, "解析时间(ms)", "D",
+        work_charts(workbook, workchart, worksheet.name, "解析时间(ms)", "D",
                    "%s20" % column)
-        workcharts(workbook, workchart, worksheet.name, "连接时间(ms)", "E",
+        work_charts(workbook, workchart, worksheet.name, "连接时间(ms)", "E",
                    "%s38" % column)
-        workcharts(workbook, workchart, worksheet.name, "下载时间(ms)", "F",
+        work_charts(workbook, workchart, worksheet.name, "下载时间(ms)", "F",
                    "%s56" % column)
         currentcol += 10
-    createextratable(workbook, titlestyle, coltitlestyle)
+    create_extra_table(workbook, titlestyle, coltitlestyle)
 
     workbook.close()
     LOG.info("%s写入数据完成" % filename)
-
-
-LOG.info("监测网站可用次数为%d" % int(check_available()))
-works()
-LOG.info("监测网站剩余可用次数为%d" % int(check_available()))

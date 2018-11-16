@@ -4,6 +4,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from monitor.utils.config import CONFIG
+
 
 def get_data(url, code):
     resp = requests.get("%s%s" % (url, code))
@@ -37,12 +39,10 @@ def get_data(url, code):
 
 
 def check_available():
-    url = "https://api.asm.ca.com/1.6/acct_credits?&callback=check_avail_credits"
+    url = CONFIG.credits_config
     response = requests.get(url)
     if response.status_code != 200:
         return 0
-    # content = json.loads(response.content.replace("check_avail_credits%s(" % (response), "").replace(")", "")).get(
-    #     "result")
     try:
         content = json.loads(
             response.content.decode().replace("check_avail_credits(",
@@ -51,7 +51,6 @@ def check_available():
         result = eval(
             str(content.get('credits')).replace("[", "").replace("]", "")).get(
             'available')
-        # print ast.literal_eval(str(content.get('credits')).replace("[", "").replace("]", "")).get('available')
         return result
     except Exception as e:
         print(e)
@@ -60,7 +59,7 @@ def check_available():
 
 def get_city():
     citys = []
-    url = "https://asm.ca.com/en/checkit.php"
+    url = CONFIG.city_config
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -71,7 +70,6 @@ def get_city():
     for data in datas:
         middle = str(data.get_text()).split("-")[1].strip()
         city = re.sub('\(.*\)', "", middle).strip()
-        # logging.info("当前城市: %s" % (city))
         citys.append(city)
 
     return citys
