@@ -3,9 +3,10 @@ from datetime import datetime
 import xlsxwriter
 from xlsxwriter.utility import xl_col_to_name
 
-from monitor.collect.collector import get_data
+from monitor.collect.collector import Asm
 from monitor.utils.config import CONFIG
 from monitor.utils.log import log_init
+from monitor.utils.exception import AsmError
 
 LOG = log_init(__name__)
 
@@ -15,24 +16,59 @@ countryCode = CONFIG.country_code_config
 cityCode = CONFIG.city_code_config
 
 
+def set_column(worksheet, columns):
+    for column in columns:
+        worksheet.set_column(column[0], column[1], column[2])
+
+
+def write_cell(worksheet, cells):
+    for cell in cells:
+        worksheet.write_string(cell[0], cell[1], cell[2], cell[3])
+
+
+def merge_cell(worksheet, cells):
+    for cell in cells:
+        worksheet.merge_range(cell[0], cell[1], cell[2], cell[3], cell[4],
+                              cell[5])
+
+
+def write_number(worksheet, cells):
+    for cell in cells:
+        worksheet.write_number(cell[0], cell[1], cell[2], cell[3])
+
+
+def title_style(cell, color, positions):
+    cell.set_bg_color(color)
+    cell.set_font_name("宋体")
+    cell.set_font_size(12)
+    cell.set_bold()
+    cell.set_bottom(1)
+    cell.set_top(1)
+    cell.set_left(1)
+    cell.set_right(1)
+    for position in positions:
+        cell.set_align(position)
+
+
+def set_font(cell, size, name, border):
+    cell.set_font_size(size)
+    cell.set_font_name(name)
+    cell.set_border(border)
+
+
 def create_extra_table(workbook, title_style, col_title_style):
     dates = datetime.today().strftime("%Y-%m-%d")
     worksheet = workbook.add_worksheet("手工监测数据")
     worksheet.merge_range(1, 1, 1, 6, "网站访问-手工监测数据统计", title_style)
     worksheet.set_row(1, 54)
-    worksheet.set_column(1, 1, 12)
-    worksheet.set_column(2, 2, 17)
-    worksheet.set_column(3, 3, 29)
-    worksheet.set_column(4, 4, 13)
-    worksheet.set_column(5, 5, 18)
-    worksheet.set_column(6, 6, 18)
-
-    worksheet.write_string(3, 1, "监测时间", col_title_style)
-    worksheet.write_string(3, 2, "监测站点", col_title_style)
-    worksheet.write_string(3, 3, "站点网址", col_title_style)
-    worksheet.write_string(3, 4, "监测工具", col_title_style)
-    worksheet.write_string(3, 5, "首页相应时间(s)", col_title_style)
-    worksheet.write_string(3, 6, "网址是否可访问", col_title_style)
+    columns = [(1, 1, 12), (2, 2, 17), (3, 3, 29), (4, 4, 13), (5, 5, 18),
+               (6, 6, 18)]
+    set_column(worksheet, columns)
+    cells = [(3, 1, "监测时间", col_title_style), (3, 2, "监测站点", col_title_style),
+             (3, 3, "站点网址", col_title_style), (3, 4, "监测工具", col_title_style),
+             (3, 5, "首页相应时间(s)", col_title_style),
+             (3, 6, "网址是否可访问", col_title_style)]
+    write_cell(worksheet, cells)
 
     mergeraw = workbook.add_format({"border": 1})
     mergeraw.set_align("center")
@@ -44,29 +80,33 @@ def create_extra_table(workbook, title_style, col_title_style):
         {"valign": "vcenter", "border": 1, "font_size": 12})
     commonstyle = workbook.add_format({"font_size": 12, "border": 1})
 
-    worksheet.merge_range(4, 1, 19, 1, "%s" % dates, mergeraw)
-    worksheet.merge_range(4, 2, 7, 2, "PlatON(京东)", mergeraw)
-    worksheet.merge_range(8, 2, 11, 2, "PlatON(东南亚)", mergeraw)
-    worksheet.merge_range(12, 2, 15, 2, "ONT本体(东南亚)", mergeraw)
-    worksheet.merge_range(16, 2, 19, 2, "Ethereum(以太坊)", mergeraw)
-    worksheet.merge_range(4, 3, 7, 3, "https://www.platon.network", sitestyle)
-    worksheet.merge_range(8, 3, 11, 3, "https://sg.platon.network", sitestyle)
-    worksheet.merge_range(12, 3, 15, 3, "https://www.ont.io", sitestyle)
-    worksheet.merge_range(16, 3, 19, 3, "https://www.ethereum.org", sitestyle)
+    cells = [
+        (4, 1, 19, 1, "%s" % dates, mergeraw),
+        (4, 2, 7, 2, "PlatON(京东)", mergeraw),
+        (8, 2, 11, 2, "PlatON(东南亚)", mergeraw),
+        (12, 2, 15, 2, "ONT本体(东南亚)", mergeraw),
+        (16, 2, 19, 2, "Ethereum(以太坊)", mergeraw),
+        (4, 3, 7, 3, "https://www.platon.network", sitestyle),
+        (8, 3, 11, 3, "https://sg.platon.network", sitestyle),
+        (12, 3, 15, 3, "https://www.ont.io", sitestyle),
+        (16, 3, 19, 3, "https://www.ethereum.org", sitestyle)
+    ]
+    merge_cell(worksheet, cells)
 
     for i in range(4, 7):
         raw = 4
         for j in range(0, 4):
             if i == 4:
-                worksheet.write_string(raw, 4, "PC网页", commonstyle)
-                worksheet.write_string(raw + 1, 4, "手机(移动)", commonstyle)
-                worksheet.write_string(raw + 2, 4, "手机(电信)", commonstyle)
-                worksheet.write_string(raw + 3, 4, "手机(联通)", commonstyle)
+                cells = [(raw, 4, "PC网页", commonstyle),
+                         (raw + 1, 4, "手机(移动)", commonstyle),
+                         (raw + 2, 4, "手机(电信)", commonstyle),
+                         (raw + 3, 4, "手机(联通)", commonstyle)]
             else:
-                worksheet.write_string(raw, i, "", commonstyle)
-                worksheet.write_string(raw + 1, i, "", commonstyle)
-                worksheet.write_string(raw + 2, i, "", commonstyle)
-                worksheet.write_string(raw + 3, i, "", commonstyle)
+                cells = [(raw, i, "", commonstyle),
+                         (raw + 1, i, "", commonstyle),
+                         (raw + 2, i, "", commonstyle),
+                         (raw + 3, i, "", commonstyle)]
+            write_cell(worksheet, cells)
             raw += 4
 
 
@@ -94,39 +134,18 @@ def works():
     titlestyle = workbook.add_format()
     coltitlestyle = workbook.add_format()
 
-    titlestyle.set_bg_color("#00B0F0")
-    titlestyle.set_font_name("宋体")
-    titlestyle.set_font_size(16)
-    titlestyle.set_bold()
-    titlestyle.set_top(1)
-    titlestyle.set_bottom(1)
-    titlestyle.set_right(1)
-    titlestyle.set_left(1)
-    titlestyle.set_align("center")
-    titlestyle.set_align("vcenter")
-
-    coltitlestyle.set_bg_color("#808080")
-    coltitlestyle.set_font_name("宋体")
-    coltitlestyle.set_font_size(12)
-    coltitlestyle.set_bold()
-    coltitlestyle.set_bottom(1)
-    coltitlestyle.set_top(1)
-    coltitlestyle.set_left(1)
-    coltitlestyle.set_right(1)
-    coltitlestyle.set_align('center')
+    title_style(titlestyle, "#00B0F0", ["center", "vcenter"])
+    title_style(coltitlestyle, "#00B0F0", ["center"])
 
     areaStyle = workbook.add_format()
-    areaStyle.set_font_size(12)
-    areaStyle.set_font_name("宋体")
-    areaStyle.set_border(1)
+    set_font(areaStyle, 12, "宋体", 1)
 
     dataStyle = workbook.add_format()
-    dataStyle.set_font_name('Arial')
-    dataStyle.set_font_size(10)
-    dataStyle.set_border(1)
+    set_font(dataStyle, 12, "Arial", 1)
 
     workchart = workbook.add_worksheet("网站访问监测图表")
     currentcol = 1
+    source = Asm()
     for site in sites.keys():
         # 数据写入行号及列数
         row = 2
@@ -143,22 +162,27 @@ def works():
                               titlestyle)
 
         # 在第二行写入表格的列名
-        worksheet.write_string(1, 1, "地区/国家", coltitlestyle)
-        worksheet.write_string(1, 2, "访问总时间(s)", coltitlestyle)
-        worksheet.write_string(1, 3, "解析时间(ms)", coltitlestyle)
-        worksheet.write_string(1, 4, "连接时间(ms)", coltitlestyle)
-        worksheet.write_string(1, 5, "下载时间(ms)", coltitlestyle)
-        worksheet.write_string(1, 6, "访问状态(ms)", coltitlestyle)
+        cells = [(1, 1, "地区/国家", coltitlestyle),
+                 (1, 2, "访问总时间(s)", coltitlestyle),
+                 (1, 3, "解析时间(ms)", coltitlestyle),
+                 (1, 4, "连接时间(ms)", coltitlestyle),
+                 (1, 5, "下载时间(ms)", coltitlestyle),
+                 (1, 6, "访问状态(ms)", coltitlestyle)]
+        write_cell(worksheet, cells)
+        api = CONFIG.cp_config
         for code in codes:
-            api = CONFIG.cp_config
             url = api + ("?checkloc=%s&type=https&host=%s&path=&port=443&"
-                      "callback=update_") % (code, site)
-            country, city, rtime, ctime, dtime = get_data(url, code)
-            worksheet.write_string(row, 1, "%s-%s" % (
-                countryCode.get(country), cityCode.get(city)), areaStyle)
-            worksheet.write_number(row, 3, int(rtime), dataStyle)
-            worksheet.write_number(row, 4, int(ctime), dataStyle)
-            worksheet.write_number(row, 5, int(dtime), dataStyle)
+                         "callback=update_") % (code, site)
+            try:
+                country, city, rtime, ctime, dtime = source.get_data(url, code)
+            except (AsmError, AssertionError):
+                continue
+            write_cell(worksheet, [(row, 1, "%s-%s" % (
+                countryCode.get(country), cityCode.get(city)), areaStyle)])
+            cells = [(row, 3, int(rtime), dataStyle),
+                     (row, 4, int(ctime), dataStyle),
+                     (row, 5, int(dtime), dataStyle)]
+            write_number(worksheet, cells)
             worksheet.write_formula(row, 2,
                                     "=SUM(D%s:F%s)/1000" % (row + 1, row + 1),
                                     dataStyle)
@@ -168,14 +192,12 @@ def works():
                                     dataStyle)
             row += 1
         column = xl_col_to_name(currentcol)
-        work_charts(workbook, workchart, worksheet.name, "访问总时间(s)", "C",
-                   "%s2" % column)
-        work_charts(workbook, workchart, worksheet.name, "解析时间(ms)", "D",
-                   "%s20" % column)
-        work_charts(workbook, workchart, worksheet.name, "连接时间(ms)", "E",
-                   "%s38" % column)
-        work_charts(workbook, workchart, worksheet.name, "下载时间(ms)", "F",
-                   "%s56" % column)
+        for item in [("访问总时间(s)", "C", "%s2" % column),
+                     ("解析时间(ms)", "D", "%s20" % column),
+                     ("连接时间(ms)", "E", "%s38" % column),
+                     ("下载时间(ms)", "F", "%s56" % column)]:
+            work_charts(workbook, workchart, worksheet.name, item[0], item[1],
+                        item[2])
         currentcol += 10
     create_extra_table(workbook, titlestyle, coltitlestyle)
 
