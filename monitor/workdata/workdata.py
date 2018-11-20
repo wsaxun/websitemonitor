@@ -170,11 +170,16 @@ def works():
                  (1, 6, "访问状态(ms)", coltitlestyle)]
         write_cell(worksheet, cells)
         api = CONFIG.cp_config
+        urls = []
         for code in codes:
             url = api + ("?checkloc=%s&type=https&host=%s&path=&port=443&"
                          "callback=update_") % (code, site)
+            urls.append(url)
+        results = source.get_data(urls)
+        print(results)
+        for result in results:
             try:
-                country, city, rtime, ctime, dtime = source.get_data(url, code)
+                country, city, rtime, ctime, dtime = result
             except (AsmError, AssertionError):
                 continue
             write_cell(worksheet, [(row, 1, "%s-%s" % (

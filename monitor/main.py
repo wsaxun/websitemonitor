@@ -15,12 +15,18 @@ def main():
     log.info("当前获取到的城市列表: %s" % city)
     visits = source.visits
     log.info("监测网站可用次数为%d" % visits)
-    if visits / 10 >= 4:
-        works()
-        log.info("监测网站剩余可用次数为%d" % source.visits)
-    else:
-        log.info("监测网站剩余可用次数为%d" % visits)
+    works()
+    #
+    # if visits / 10 >= 4:
+    #     works()
+    #     log.info("监测网站剩余可用次数为%d" % source.visits)
+    # else:
+    #     log.info("监测网站剩余可用次数为%d" % visits)
 
 
 if __name__ == '__main__':
+    import datetime
+    print(datetime.datetime.now())
     main()
+    print(datetime.datetime.now())
+
