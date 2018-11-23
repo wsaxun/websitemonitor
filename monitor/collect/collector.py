@@ -56,7 +56,7 @@ class Asm:
             if not error_code:
                 return 0
             return error_code
-        return response.read()
+        return response.read().decode()
 
     @property
     def visits(self):
